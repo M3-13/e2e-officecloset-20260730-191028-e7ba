@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import { AuthProvider, ProtectedRoute } from "./contexts/AuthContext";
 import Layout from "./components/Layout";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
@@ -11,17 +12,47 @@ import PrivacyPage from "./pages/PrivacyPage";
 
 export default function App() {
   return (
-    <Routes>
-      <Route element={<Layout />}>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/wardrobe" element={<WardrobePage />} />
-        <Route path="/outfits/new" element={<OutfitCreatorPage />} />
-        <Route path="/outfits" element={<OutfitsPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/privacy" element={<PrivacyPage />} />
-      </Route>
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route
+            path="/wardrobe"
+            element={
+              <ProtectedRoute>
+                <WardrobePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/outfits/new"
+            element={
+              <ProtectedRoute>
+                <OutfitCreatorPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/outfits"
+            element={
+              <ProtectedRoute>
+                <OutfitsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/privacy" element={<PrivacyPage />} />
+        </Route>
+      </Routes>
+    </AuthProvider>
   );
 }
