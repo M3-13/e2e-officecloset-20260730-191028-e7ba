@@ -1,11 +1,12 @@
 import os
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.auth import router as auth_router
-from app.database import Base, engine
+from app.database import DATABASE_URL, Base, engine
 from app.routers.items import router as items_router
 from app.routers.outfits import router as outfits_router
 from app.routers.user import router as user_router
@@ -13,9 +14,17 @@ from app.routers.user import router as user_router
 auth_enabled: bool = False
 
 
+def _ensure_db_directory():
+    if DATABASE_URL.startswith("sqlite:///"):
+        db_path = DATABASE_URL.removeprefix("sqlite:///")
+        db_dir = Path(db_path).parent
+        db_dir.mkdir(parents=True, exist_ok=True)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global auth_enabled
+    _ensure_db_directory()
     Base.metadata.create_all(bind=engine)
     jwt_secret = os.environ.get("JWT_SECRET")
     if jwt_secret:
