@@ -1,0 +1,66 @@
+{
+  "runcontract": 1,
+  "services": [
+    {
+      "name": "api",
+      "dir": "backend",
+      "stack": "python",
+      "kind": "server",
+      "install": [
+        ["${python}", "-m", "pip", "install", "-q", "-r", "requirements.txt"]
+      ],
+      "start": [
+        "${python}",
+        "-m",
+        "uvicorn",
+        "app.main:app",
+        "--port",
+        "${PORT}"
+      ],
+      "port": 8000,
+      "port_env": "PORT",
+      "health": {
+        "path": "/api/health",
+        "expect_status": [200]
+      },
+      "env": {
+        "DATABASE_URL": {
+          "dev": "sqlite:///./data/closet.db"
+        },
+        "JWT_SECRET": {
+          "external": true,
+          "degraded_without": "Auth endpoints respond 503"
+        },
+        "UPLOAD_DIR": {
+          "dev": "./uploads"
+        },
+        "FRONTEND_ORIGIN": {
+          "dev": "http://localhost:5173"
+        }
+      }
+    },
+    {
+      "name": "frontend",
+      "dir": "frontend",
+      "stack": "web-vite",
+      "kind": "static",
+      "install": [
+        ["npm", "install"]
+      ],
+      "build": [
+        ["npm", "run", "build"]
+      ],
+      "start": [
+        ["npm", "run", "preview", "--", "--port", "${PORT}"]
+      ],
+      "serve_dir": "dist",
+      "port": 5173,
+      "port_env": "PORT",
+      "health": {
+        "path": "/",
+        "expect_status": [200]
+      },
+      "env": {}
+    }
+  ]
+}
