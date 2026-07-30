@@ -50,26 +50,6 @@ def test_items_delete_stub_returns_503(client):
     assert response.status_code == 503
 
 
-def test_outfits_create_stub_returns_503(client):
-    response = client.post("/api/outfits", json={"name": "Test Outfit", "item_ids": [1]})
-    assert response.status_code == 503
-
-
-def test_outfits_list_stub_returns_503(client):
-    response = client.get("/api/outfits")
-    assert response.status_code == 503
-
-
-def test_outfits_get_stub_returns_503(client):
-    response = client.get("/api/outfits/1")
-    assert response.status_code == 503
-
-
-def test_outfits_delete_stub_returns_503(client):
-    response = client.delete("/api/outfits/1")
-    assert response.status_code == 503
-
-
 def test_user_delete_account_stub_returns_503(client):
     response = client.delete("/api/user/account")
     assert response.status_code == 503
